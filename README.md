@@ -3,18 +3,23 @@
 A small service, powered by [Flask](https://flask.palletsprojects.com/en/2.2.x/) that will determine if two date ranges overlap or not with a JSON response as its data return.
 
 ## Requirements
-- Python 3.10
-- Docker
-- Make
+- [Python 3.9+](https://www.python.org/downloads/)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Make](https://www.gnu.org/software/make/manual/make.html)
 
 ## Usage
-This can be run locally, you will need to have the above requirements installed on your machine.  Once those are installed its as simple as running
+This can be run locally, you will need to have the above requirements installed on your machine.  Once those are installed its as simple as running.  Please note this runs docker compose to test the API as well
 
 ```shell
 
-$ make build run
+$ make run
 
 ```
+
+If you would rather build just the docker image, you can run `make build`
+
+If we wanted to push this image a registry, we could do that with `make push-image`, **NOTE** We are not actually doing any pushes here, but only to demonstrate how we might accomplish that in say a CI/CD pipeline.
 
 ## API Request requiremenets
 
@@ -28,9 +33,9 @@ $ make build run
         - using date formats `?range1=2023-01-01,2023-01-5&range2=2021-01-01,2023-01-03`, 
         - even with minutes (ISO8601) - `/?range1=2023-01-01T00:00:00,2023-01-01T00:01:00&range2=2023-01-01T00:00:00,2023-01-01T00:00:30`
         - or just the years - `?range1=2021,2023&range2=2021,2022`
-- If an dateformat is not able to be parsed, or has an issue, will recieve a `400` HTTP response, with the error
+- If a dateformt provided by the user is not able to be parsed, or has an issue, we will recieve a `400` HTTP response, with the error
 
 ## Testing
-Unittests are done using the [VCR.py]() and can be found in the `tests.py` file in this repo
+Unittests are done using the [VCR.py]() and can be found in the `api_tests.py` file in this repo
 
-When the API service is running, you can run them with the 
+The API can be tested with docker compose easily with `make run`.  This will actually use two different containers and services, one service will run our flask API, and the other one will test the API with our `api_tests.py`.  You will see the `service-api-tests` return OK if the tests pass.
