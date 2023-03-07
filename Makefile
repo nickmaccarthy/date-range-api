@@ -6,3 +6,6 @@ build:
 
 run: 
 	docker compose up --build
+
+push-image:
+	docker push <registry_name>/${IMAGE_NAME}:${IMAGE_TAG}
