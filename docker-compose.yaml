@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - "5001:5001"
+    environment:
+      FLASK_DEBUG: "true"
+  tests:
+    build: .
+    environment:
+      - BASE_URL=http://api:5001
+    command: ["python3", "-m", "unittest", "api_tests.py"]
+    depends_on:
+      - api
