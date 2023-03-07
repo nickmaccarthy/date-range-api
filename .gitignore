@@ -1,2 +1,4 @@
 __pycache__
 venv*
+*.yaml
+test_
