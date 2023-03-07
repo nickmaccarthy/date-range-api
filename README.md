@@ -6,6 +6,30 @@ Dates will be parsed and convereted to datetime via my [python-datemath](https:/
 
 This project is meant to run in docker, and or docker compose for its demo.
 
+## Response
+This API, upon success, will return a JSON object represenign the date ranges given, and an boolen element `ranges_overlap`, that determines if the date ranges overlap or not 
+
+| METHOD | ENDPOINT | ARGS | EXAMPLE | RESPONSE_TYPE |
+| ---    | ----     | ---  | --      | ---           |
+| `GET`  | `/`      | `range1=start,end`, `range2=start,end`| `range1=2021,2023`,`range2=2021,2022` | `application/json`
+
+Example response:
+```json
+{
+    "range1": {
+        "end": "now",
+        "start": "now-1h"
+    },
+    "range2": {
+        "end": "2021",
+        "start": "2021"
+    },
+    "ranges_overlap": false
+}
+```
+
+For more detailed usage, see the "API Request details" of this README
+
 ## Requirements
 - [Python 3.9+](https://www.python.org/downloads/)
 - [Docker](https://docs.docker.com/get-docker/)
@@ -26,7 +50,7 @@ If you would rather build just the docker image, you can run `make build`
 
 If we wanted to push this image a registry, we could do that with `make push-image`, **NOTE** We are not actually doing any pushes here, but only to demonstrate how we might accomplish that in say a CI/CD pipeline.
 
-## API Request requiremenets
+## API Request details
 
 - This API only accepts `GET` method requests, any other methods such as `POST` will result in a [405](https://http.cat/405) HTTP response code
 - The API only has one endpoint and responds to the index, i.e. `/` currently
@@ -38,14 +62,9 @@ If we wanted to push this image a registry, we could do that with `make push-ima
         - using date formats `?range1=2023-01-01,2023-01-5&range2=2021-01-01,2023-01-03`, 
         - even with minutes (ISO8601) - `/?range1=2023-01-01T00:00:00,2023-01-01T00:01:00&range2=2023-01-01T00:00:00,2023-01-01T00:00:30`
         - or just the years - `?range1=2021,2023&range2=2021,2022`
-- If a dateformt provided by the user is not able to be parsed, or has an issue, we will recieve a [400](https://http.cat/400) HTTP response, with the error
+- If a date format provided by the user is not able to be parsed, or has an issue, we will recieve a [400](https://http.cat/400) HTTP response, with the error
 
-## Automated Tests
-Unittests are done using the [VCR.py]() and can be found in the `api_tests.py` file in this repo
-
-The API can be tested with docker compose easily with `make run`.  This will actually use two different services, one service will run our flask API (called `api`), and the other one will test the API with our `api_tests.py` (called `tests`).  You will see the `service-api-tests` return OK if the tests pass, when you run a `make run`.
-
-## Using the API
+### Using the API locally
 When you have ran `make run` the API should be avilable on your local machine and able to interacted with `CURL` quite easily
 
 examples:
@@ -54,6 +73,13 @@ $ curl -XGET "http://127.0.0.1:5001/?range1=2021,2023&range2=2021,2022"
 $ curl -XGET "http://127.0.0.1:5001/?range1=now-1h,now&range2=2021,2022"
 $ curl -XGET "http://127.0.0.1:5001/?range1=2023-01-01T00:00:00,2023-01-01T00:01:00&range2=2023-01-01T00:00:00,2023-01-01T00:00:30"
 ```
+
+## Automated Tests
+Unittests are done using the [VCR.py]() and can be found in the `api_tests.py` file in this repo
+
+The API can be tested with docker compose easily with `make run`.  This will actually use two different services, one service will run our flask API (called `api`), and the other one will test the API with our `api_tests.py` (called `tests`).  You will see the `service-api-tests` return OK if the tests pass, when you run a `make run`.
+
+
 
 
 ## Files
